@@ -1,0 +1,12 @@
+,0
+churn,int64
+accountweeks,int64
+contractrenewal,int64
+dataplan,int64
+datausage,float64
+custservcalls,int64
+daymins,float64
+daycalls,int64
+monthlycharge,float64
+overagefee,float64
+roammins,float64

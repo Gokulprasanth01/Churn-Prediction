@@ -1,0 +1,21 @@
+,0
+state,object
+account length,int64
+area code,int64
+international plan,object
+voice mail plan,object
+number vmail messages,int64
+total day minutes,float64
+total day calls,int64
+total day charge,float64
+total eve minutes,float64
+total eve calls,int64
+total eve charge,float64
+total night minutes,float64
+total night calls,int64
+total night charge,float64
+total intl minutes,float64
+total intl calls,int64
+total intl charge,float64
+customer service calls,int64
+churn,int64

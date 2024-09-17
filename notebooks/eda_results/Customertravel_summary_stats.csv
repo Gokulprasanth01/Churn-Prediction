@@ -1,0 +1,8 @@
+,count,unique,top,freq,mean,std,min,25%,50%,75%,max
+age,954.0,,,,32.109014675052414,3.3373875705732376,27.0,30.0,31.0,35.0,38.0
+frequentflyer,954,3,No,608,,,,,,,
+annualincomeclass,954,3,Middle Income,409,,,,,,,
+servicesopted,954.0,,,,2.4371069182389937,1.606233403062809,1.0,1.0,2.0,4.0,6.0
+accountsyncedtosocialmedia,954,2,No,594,,,,,,,
+bookedhotelornot,954,2,No,576,,,,,,,
+churn,954.0,,,,0.2348008385744235,0.42409661058475157,0.0,0.0,0.0,0.0,1.0

@@ -1,0 +1,12 @@
+,0
+id,int64
+is_tv_subscriber,int64
+is_movie_package_subscriber,int64
+subscription_age,float64
+bill_avg,int64
+reamining_contract,float64
+service_failure_count,int64
+download_avg,float64
+upload_avg,float64
+download_over_limit,int64
+churn,int64

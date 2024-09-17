@@ -1,0 +1,15 @@
+,0
+rownumber,int64
+customerid,int64
+surname,object
+creditscore,int64
+geography,object
+gender,object
+age,int64
+tenure,int64
+balance,float64
+numofproducts,int64
+hascrcard,int64
+isactivemember,int64
+estimatedsalary,float64
+churn,int64

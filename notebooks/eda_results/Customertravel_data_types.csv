@@ -1,0 +1,8 @@
+,0
+age,int64
+frequentflyer,object
+annualincomeclass,object
+servicesopted,int64
+accountsyncedtosocialmedia,object
+bookedhotelornot,object
+churn,int64
