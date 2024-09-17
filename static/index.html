@@ -5,89 +5,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Churn Prediction</title>
     <script>
-        // Fetch available datasets from the API
-        async function loadDatasets() {
+        async function fetchDatasets() {
             const response = await fetch('/datasets/');
             const data = await response.json();
-            const datasetSelect = document.getElementById('datasetSelect');
-            
-            data.datasets.forEach(dataset => {
-                const option = document.createElement('option');
-                option.value = dataset;
-                option.textContent = dataset;
-                datasetSelect.appendChild(option);
+            const datasets = data.datasets;
+
+            const datasetSelect = document.getElementById('dataset');
+            datasetSelect.innerHTML = '<option value="">Select a dataset</option>';
+            datasets.forEach(dataset => {
+                datasetSelect.innerHTML += `<option value="${dataset}">${dataset}</option>`;
             });
         }
 
-        // Send prediction request
-        async function predictChurn() {
-            const dataset = document.getElementById('datasetSelect').value;
-            const customerData = {
-                creditscore: document.getElementById('creditscore').value,
-                geography: document.getElementById('geography').value,
-                gender: document.getElementById('gender').value,
-                age: document.getElementById('age').value,
-                balance: document.getElementById('balance').value,
-                numofproducts: document.getElementById('numofproducts').value,
-                hascrcard: document.getElementById('hascrcard').value,
-                isactivemember: document.getElementById('isactivemember').value,
-                estimatedsalary: document.getElementById('estimatedsalary').value
-            };
-            
-            const response = await fetch(`/predict/`, {
+        async function fetchColumns() {
+            const datasetName = document.getElementById('dataset').value;
+            if (!datasetName) return;
+
+            const response = await fetch(`/datasets/${datasetName}`);
+            const data = await response.json();
+            const columns = data.columns;
+
+            const form = document.getElementById('data-form');
+            form.innerHTML = '';
+
+            columns.forEach(column => {
+                if (column !== 'churn') {
+                    form.innerHTML += `<label for="${column}">${column}:</label><input type="text" id="${column}" name="${column}"><br>`;
+                }
+            });
+        }
+
+        async function fetchModels() {
+            const response = await fetch('/models/');
+            const data = await response.json();
+            const models = data.models;
+
+            const modelSelect = document.getElementById('model');
+            modelSelect.innerHTML = '<option value="">Select a model</option>';
+            models.forEach(model => {
+                modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
+            });
+        }
+
+        async function trainModel() {
+            const dataset = document.getElementById('dataset').value;
+            if (!dataset) {
+                alert('Please select a dataset.');
+                return;
+            }
+
+            const response = await fetch('/train/', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    dataset_name: dataset,
-                    data: customerData
-                })
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ dataset_name: dataset })
             });
-            
+
             const result = await response.json();
-            document.getElementById('result').textContent = 'Churn Prediction: ' + result.prediction;
+            alert(result.message);
         }
 
-        window.onload = loadDatasets;
+        async function predictChurn() {
+            const dataset = document.getElementById('dataset').value;
+            const model = document.getElementById('model').value;
+            if (!dataset || !model) {
+                alert('Please select a dataset and model.');
+                return;
+            }
+
+            const formData = new FormData(document.getElementById('data-form'));
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            const response = await fetch('/predict/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ dataset_name: dataset, model_name: model, data: data })
+            });
+
+            const result = await response.json();
+            alert(`Prediction: ${result.prediction}, Probability: ${result.probability}`);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDatasets();
+            fetchModels();
+        });
     </script>
 </head>
 <body>
-    <h1>Churn Prediction System</h1>
+    <h1>Churn Prediction</h1>
     
-    <label for="datasetSelect">Choose a Dataset:</label>
-    <select id="datasetSelect">
-        <option value="">Select a Dataset</option>
-    </select>
+    <h2>Train Model</h2>
+    <label for="dataset">Dataset:</label>
+    <select id="dataset" name="dataset" onchange="fetchColumns()">
+        <option value="">Select a dataset</option>
+    </select><br>
     
-    <h3>Enter Customer Data:</h3>
-    <label for="creditscore">Credit Score:</label>
-    <input type="number" id="creditscore" placeholder="Credit Score"><br>
+    <button onclick="trainModel()">Train Model</button>
 
-    <label for="geography">Geography:</label>
-    <input type="text" id="geography" placeholder="Geography"><br>
-
-    <label for="gender">Gender:</label>
-    <input type="text" id="gender" placeholder="Gender"><br>
-
-    <label for="age">Age:</label>
-    <input type="number" id="age" placeholder="Age"><br>
-
-    <label for="balance">Balance:</label>
-    <input type="number" id="balance" placeholder="Balance"><br>
-
-    <label for="numofproducts">Number of Products:</label>
-    <input type="number" id="numofproducts" placeholder="Number of Products"><br>
-
-    <label for="hascrcard">Has Credit Card:</label>
-    <input type="number" id="hascrcard" placeholder="Has Credit Card (0/1)"><br>
-
-    <label for="isactivemember">Is Active Member:</label>
-    <input type="number" id="isactivemember" placeholder="Is Active Member (0/1)"><br>
-
-    <label for="estimatedsalary">Estimated Salary:</label>
-    <input type="number" id="estimatedsalary" placeholder="Estimated Salary"><br>
-
-    <button onclick="predictChurn()">Predict Churn</button>
+    <h2>Predict Churn</h2>
+    <label for="dataset">Dataset:</label>
+    <select id="dataset" name="dataset" onchange="fetchColumns()">
+        <option value="">Select a dataset</option>
+    </select><br>
     
-    <h3 id="result"></h3>
+    <label for="model">Model:</label>
+    <select id="model" name="model">
+        <option value="">Select a model</option>
+    </select><br>
+
+    <form id="data-form"></form>
+
+    <button onclick="predictChurn()">Predict</button>
 </body>
 </html>
